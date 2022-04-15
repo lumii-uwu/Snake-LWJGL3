@@ -1,4 +1,4 @@
-package de.vertices.snake.utils;
+package moe.lumii.snake.utils;
 
 public enum OSType {
 

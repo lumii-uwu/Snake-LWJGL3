@@ -1,46 +1,71 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'java'
+    id 'application'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = 'rune'
-version = '1.0.0-release.1'
-group = 'de.vertices'
+archivesBaseName = 'snake'
+version = '1.0.0'
+group = 'moe.lumii'
+
+project.ext.lwjglVersion = "3.3.1"
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+                ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+                : "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = System.getProperty("os.arch").startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+        break
+    case OperatingSystem.WINDOWS:
+        def osArch = System.getProperty("os.arch")
+        project.ext.lwjglNatives = osArch.contains("64")
+                ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+                : "natives-windows-x86"
+        break
+}
 
 repositories {
-    flatDir { dirs "${rootProject.projectDir}/libs" }
+    mavenCentral()
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Logging
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+
+    // LWJGL
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-assimp"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-openal"
+    implementation "org.lwjgl:lwjgl-opengl"
+    implementation "org.lwjgl:lwjgl-stb"
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    options.fork = true;
+mainClassName = "moe.lumii.Start"
+
+run {
+    if (OperatingSystem.current() == OperatingSystem.MAC_OS)
+        jvmArgs = ["-XstartOnFirstThread"]
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-}
-
-jar {
-    from "LICENSE"
-}
-
-build {
-    jar.from {
-        jar.duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        configurations.runtimeClasspath.collect {
-            String libFolder = buildDir.toString();
-            libFolder = libFolder.substring(0, libFolder.length() - (new String("build").length() + 1))
-            libFolder += "\\libs";
-            if (it.toString().startsWith(libFolder)) {
-                zipTree(it)
-            }
-        }
-    }
+application {
+    if (OperatingSystem.current() == OperatingSystem.MAC_OS)
+        applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 }

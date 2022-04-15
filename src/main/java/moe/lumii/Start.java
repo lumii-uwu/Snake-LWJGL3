@@ -1,5 +1,7 @@
-import de.vertices.snake.Snake;
-import de.vertices.snake.utils.OSType;
+package moe.lumii;
+
+import moe.lumii.snake.Snake;
+import moe.lumii.snake.utils.OSType;
 
 public final class Start {
     static {
