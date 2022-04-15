@@ -32,35 +32,43 @@ switch (OperatingSystem.current()) {
         break
 }
 
+project.ext.slf4jVersion = "1.7.36"
+project.ext.tinyLogVersion = "2.4.1"
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     // Logging
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation group: 'org.tinylog', name: 'tinylog-api', version: project.ext.tinyLogVersion
+    implementation group: 'org.tinylog', name: 'tinylog-impl', version: project.ext.tinyLogVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
+    implementation group: 'org.tinylog', name: 'slf4j-tinylog', version: project.ext.tinyLogVersion
 
     // LWJGL
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-
-    implementation "org.lwjgl:lwjgl"
-    implementation "org.lwjgl:lwjgl-assimp"
-    implementation "org.lwjgl:lwjgl-glfw"
-    implementation "org.lwjgl:lwjgl-openal"
-    implementation "org.lwjgl:lwjgl-opengl"
-    implementation "org.lwjgl:lwjgl-stb"
+    implementation platform(group: 'org.lwjgl', name: 'lwjgl-bom', version: project.ext.lwjglVersion)
+    implementation group: 'org.lwjgl', name: 'lwjgl', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    implementation group: 'org.lwjgl', name: 'lwjgl-assimp', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+    implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    implementation group: 'org.lwjgl', name: 'lwjgl-openal', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    implementation group: 'org.lwjgl', name: 'lwjgl-stb', version: project.ext.lwjglVersion
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 }
 
 mainClassName = "moe.lumii.Start"
 
 run {
+    System.out.println()
+    File file = new File("${rootProject.projectDir}/run")
+    file.mkdirs()
+    workingDir = file
     if (OperatingSystem.current() == OperatingSystem.MAC_OS)
         jvmArgs = ["-XstartOnFirstThread"]
 }
