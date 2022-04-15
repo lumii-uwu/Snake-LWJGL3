@@ -1,7 +1,7 @@
 package moe.lumii.snake;
 
 
-import org.lwjgl.*;
+import moe.lumii.snake.render.RenderSystem;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -25,13 +25,17 @@ public final class Snake {
         return INSTANCE;
     }
 
+    public static Logger getLogger() {
+        return logger;
+    }
+
     // The window handle
     private long window;
 
     public void run() {
-        logger.info("Hello LWJGL {}!", Version.getVersion());
-
+        logger.info("initializing glfw-defaults...");
         init();
+        logger.info("...done!");
         loop();
 
         // Free the window callbacks and destroy the window
@@ -108,19 +112,17 @@ public final class Snake {
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
+            RenderSystem.RenderCall.dispatchRenderCalls();
             glfwSwapBuffers(window); // swap the color buffers
-
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
         }
     }
-
 }

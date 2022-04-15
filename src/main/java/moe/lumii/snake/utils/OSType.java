@@ -1,7 +1,6 @@
 package moe.lumii.snake.utils;
 
 public enum OSType {
-
     WINDOWS_32x("windows", "x86"),
     WINDOWS_64x("windows", "x64"),
     LINUX_arm32("linux", "arm32"),
@@ -11,7 +10,9 @@ public enum OSType {
 
     private static OSType currentOS = null;
 
+    //@formatter:off
     OSType(final String name, final String arch) {}
+    //@formatter:on
 
     public static OSType getCurrentOS() {
         return currentOS;
@@ -20,5 +21,4 @@ public enum OSType {
     public static void setCurrentOS(final OSType osType) {
         currentOS = osType;
     }
-
 }

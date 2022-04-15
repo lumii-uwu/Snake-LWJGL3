@@ -34,6 +34,7 @@ switch (OperatingSystem.current()) {
 
 project.ext.slf4jVersion = "1.7.36"
 project.ext.tinyLogVersion = "2.4.1"
+project.ext.fastUtil = "8.5.8"
 
 repositories {
     mavenCentral()
@@ -45,6 +46,7 @@ dependencies {
     implementation group: 'org.tinylog', name: 'tinylog-impl', version: project.ext.tinyLogVersion
     implementation group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     implementation group: 'org.tinylog', name: 'slf4j-tinylog', version: project.ext.tinyLogVersion
+    implementation group: 'it.unimi.dsi', name: 'fastutil', version: project.ext.fastUtil
 
     // LWJGL
     implementation platform(group: 'org.lwjgl', name: 'lwjgl-bom', version: project.ext.lwjglVersion)
@@ -69,8 +71,6 @@ run {
     File file = new File("${rootProject.projectDir}/run")
     file.mkdirs()
     workingDir = file
-    if (OperatingSystem.current() == OperatingSystem.MAC_OS)
-        jvmArgs = ["-XstartOnFirstThread"]
 }
 
 application {
